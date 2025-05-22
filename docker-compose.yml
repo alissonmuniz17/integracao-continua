@@ -21,10 +21,10 @@ services:
       - "54321:80"
     depends_on:
       - postgres
-
-  app:
-    build: .
-    ports:
-      - "8000:8000"
-    depends_on:
-      - postgres
+    environment:
+      - HOST=postgres
+      - USER=root
+      - PASSWORD=root
+      - DBNAME=root
+      - DBPORT=5432
+      - PORT=8000
