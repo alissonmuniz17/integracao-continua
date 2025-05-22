@@ -1,13 +1,20 @@
-FROM ubuntu:latest
-
-EXPOSE 8000
+# Etapa 1 - Build
+FROM golang:1.22 AS builder
 
 WORKDIR /app
 
-ENV HOST=localhost DBPORT=5432
+COPY . .
 
-ENV USER=root PASSWORD=root DBNAME=root
+RUN go mod tidy
+RUN go build -o main
 
-COPY ./main main
+# Etapa 2 - Run
+FROM ubuntu:latest
 
-CMD [ "./main" ]
+WORKDIR /app
+
+COPY --from=builder /app/main .
+
+EXPOSE 8000
+
+CMD ["./main"]
