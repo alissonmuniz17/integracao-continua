@@ -21,10 +21,3 @@ services:
       - "54321:80"
     depends_on:
       - postgres
-    environment:
-      - HOST=postgres
-      - USER=root
-      - PASSWORD=root
-      - DBNAME=root
-      - DBPORT=5432
-      - PORT=8000
