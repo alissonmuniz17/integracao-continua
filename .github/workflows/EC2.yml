@@ -1,31 +1,33 @@
-name: Entrega continua
+name: Deploy EC2
 
 on:
   workflow_call:
 
 jobs:
-
-  EC2:
+  deploy-ec2:
     runs-on: ubuntu-latest
+
     steps:
-    - uses: actions/checkout@v4.2.2
-    - name: Download a Build Artifact
-      uses: actions/download-artifact@v4.3.0
+    - name: Checkout do código
+      uses: actions/checkout@v4
+
+    - name: Baixar artefato do build
+      uses: actions/download-artifact@v4
       with:
-    # Artifact name
         name: programa
-    
-    - name: Deploy to Staging server
-      uses: easingthemes/ssh-deploy@main
-      env:
-        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-        REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
-        REMOTE_USER: ${{ secrets.REMOTE_USER }}
-        TARGET: /home/${{ secrets.REMOTE_USER }}
-        EXCLUDE: "postgres-data"
-        
-    - name: executing remote ssh commands using password
-      uses: appleboy/ssh-action@master
+
+    - name: Upload dos arquivos para o servidor
+      uses: appleboy/scp-action@v0.1.7
+      with:
+        host: ${{ secrets.REMOTE_HOST }}
+        username: ${{ secrets.REMOTE_USER }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        port: 22
+        source: "./main"
+        target: "/home/${{ secrets.REMOTE_USER }}/"
+
+    - name: Executar comandos remotos via SSH
+      uses: appleboy/ssh-action@v1.0.0
       with:
         host: ${{ secrets.REMOTE_HOST }}
         username: ${{ secrets.REMOTE_USER }}
@@ -38,7 +40,12 @@ jobs:
           export DBNAME=${{ secrets.DBNAME }}
           export DBPORT=${{ secrets.DBPORT }}
           export PORT=8000
+
+          cd /home/${{ secrets.REMOTE_USER }}
           chmod +x main
+
+          # Matar processos antigos da aplicação, se houver
+          pkill -f "./main" || true
+
+          # Iniciar aplicação em segundo plano
           nohup ./main > nohup.out 2> nohup.err < /dev/null &
-        
-        
