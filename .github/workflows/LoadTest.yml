@@ -26,10 +26,11 @@ jobs:
     - run: terraform -chdir=teste-de-carga/env/Homolog destroy -auto-approve
     - run: terraform -chdir=teste-de-carga/env/Homolog apply -auto-approve
 
-    - name: Pega IP do ALB
-      id: get_ip
-      run: echo "ip=$(terraform -chdir=teste-de-carga/env/Homolog output -raw IP_alb)" >> $GITHUB_OUTPUT
-
+    - name: Obter DNS do ALB
+      id: get_alb
+      run: |
+        alb=$(terraform -chdir=teste-de-carga/env/Homolog output -raw IP_alb)
+        echo "alb=$alb" >> $GITHUB_OUTPUT
     
     - name: Setup Python
       uses: actions/setup-python@v5.6.0
@@ -53,7 +54,9 @@ jobs:
         echo "	tasks = [UserTasks]" >> locustfile.py
         echo "	wait_time = between(1, 5)" >> locustfile.py
 
-    - name: Roda teste de carga
-      run: sleep 60s ; locust -f locustfile.py --headless -u 10 -r 5 --run-time 60s -H http://${{ steps.get_ip.outputs.ip }}
+    - name: Rodar teste de carga
+      run: |
+        sleep 60s
+        locust -f locustfile.py --headless -u 10 -r 5 --run-time 60s -H http://${{ steps.get_alb.outputs.alb }}
 
     - run: terraform -chdir=teste-de-carga/env/Homolog destroy -auto-approve
