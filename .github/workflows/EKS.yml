@@ -26,6 +26,9 @@ jobs:
     - name: Init Terraform
       run: terraform -chdir=Infra_CI_Kubernetes/env/Homolog init
 
+    - run: |
+              echo "Identificando o ARN da AWS..." ; aws sts get-caller-identity --query Arn --output text
+
     - name: Apply Terraform
       run: terraform -chdir=Infra_CI_Kubernetes/env/Homolog apply -auto-approve
 
