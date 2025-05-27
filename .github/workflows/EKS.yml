@@ -21,6 +21,12 @@ jobs:
     - name: Clonando repositório
       run: git clone https://github.com/alissonmuniz17/Infra_CI_Kubernetes.git
 
+    - name: Limpar cache local do Terraform
+      run: |
+        echo "Removendo .terraform/ e .terraform.lock.hcl de Infra_CI_Kubernetes/env/Homolog"
+        rm -rf Infra_CI_Kubernetes/env/Homolog/.terraform
+        rm -f Infra_CI_Kubernetes/env/Homolog/.terraform.lock.hcl
+
     - name: Exibindo conteúdo do EKS.tf
       run: |
         echo "--- Conteúdo do EKS.tf ---"
