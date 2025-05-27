@@ -26,10 +26,18 @@ jobs:
     - name: Init Terraform
       run: terraform -chdir=Infra_CI_Kubernetes/env/Homolog init
 
-    - name: Destroy Terraform anterior
-      run: terraform -chdir=Infra_CI_Kubernetes/env/Homolog destroy -auto-approve
-
     - name: Apply Terraform
       run: terraform -chdir=Infra_CI_Kubernetes/env/Homolog apply -auto-approve
 
-    
+    - name: Intalando o Kubectl
+      uses: Azure/setup-kubectl@v4.0.0
+
+    - name: Criando um arquivo kubeconfig
+      run: aws sts get-caller-identity
+
+    - name: Criar arquivo kubeconfig automaticamente
+      run: aws eks update-kubeconfig --region us-west-2 --name homolog2
+
+    - name: Testando a configuração
+      run: kubectl get svc
+      
