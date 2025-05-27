@@ -47,7 +47,7 @@ jobs:
         
     - name: Requisição
       continue-on-error: true
-      run: echo "REQUEST=0" >> $GITHUB_ENV ; sleep 60s ; wget http://lb-api-go-863665058.us-east-2.elb.amazonaws.com:8000/alisson || echo "REQUEST=1" >> $GITHUB_ENV 
+      run: echo "REQUEST=0" >> $GITHUB_ENV ; sleep 60s ; wget http://lb-api-go-863665058.us-east-2.elb.amazonaws.com:8000/leo || echo "REQUEST=1" >> $GITHUB_ENV 
 
     - name: Deploy Amazon ECS task definition
       if: ${{ env.REQUEST != 0 }}
