@@ -39,9 +39,9 @@ jobs:
     - name: Init Terraform
       run: terraform -chdir=Infra_CI_Kubernetes/env/Homolog init -upgrade
 
-    - name: Destroy Terraform
-      run: terraform -chdir=Infra_CI_Kubernetes/env/Homolog destroy -auto-approve
-
+    - name: Plan Terraform (Teste)
+      run: terraform -chdir=Infra_CI_Kubernetes/env/Homolog plan
+      
     - name: Apply Terraform
       run: terraform -chdir=Infra_CI_Kubernetes/env/Homolog apply -auto-approve
 
