@@ -17,12 +17,19 @@ jobs:
         aws-access-key-id: ${{ secrets.ID_CHAVE_ACESSO }}
         aws-secret-access-key: ${{ secrets.CHAVE_SECRETA }}
         aws-region: us-west-2
+    
+    - name: Clonando repositório
+      run: git clone https://github.com/alissonmuni17/Infra_CI_Kubernetes.git
 
-    - run: git clone https://github.com/alissonmuniz17/Infra_CI_Kubernetes.git
-
+    - name: Exibindo conteúdo do EKS.tf
+      run: |
+        echo "--- Conteúdo do EKS.tf ---"
+        cat Infra_CI_Kubernetes/infra/EKS.tf
+        echo "--- Fim do Conteúdo ---"
+    
     - name: Instalando Terraform
       uses: hashicorp/setup-terraform@v2.0.3
-
+      
     - name: Init Terraform
       run: terraform -chdir=Infra_CI_Kubernetes/env/Homolog init -upgrade
 
@@ -43,4 +50,4 @@ jobs:
 
     - name: Testando a configuração
       run: kubectl get svc
-      
+          
