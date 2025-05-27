@@ -57,7 +57,7 @@ jobs:
         echo "	wait_time = between(1, 5)" >> locustfile.py
 
     - name: Executando teste de carga
-      run: sleep 60s ; locust -f locustfile.py --headless -u 10 -r 5 --run-time 60s -H http://${{ steps.URL.outputs.stdout }}
+      run: sleep 60s ; locust -f locustfile.py --headless -u 10 -r 5 --run-time 120s -H http://${{ steps.URL.outputs.stdout }}
       
     - name: Destroy infraestrutura
       run: terraform -chdir=teste-de-carga/env/Homolog destroy -auto-approve
