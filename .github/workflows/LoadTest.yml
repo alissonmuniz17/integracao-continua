@@ -30,12 +30,8 @@ jobs:
     - name: Apply Terraform
       run: terraform -chdir=teste-de-carga/env/Homolog apply -auto-approve
 
-    - name: Captura DNS do ALB
-      id: alb
-      run: |
-        alb_dns=$(terraform -chdir=teste-de-carga/env/Homolog output -raw alb_dns)
-        echo "alb_dns=$alb_dns"
-        echo "alb_dns=$alb_dns" >> $GITHUB_ENV
+    - run: echo "$(terraform -chdir=teste-de-carga/env/Homolog output -raw IP_alb)"
+      id: URL
 
     - name: Setup Python
       uses: actions/setup-python@v5
@@ -49,21 +45,19 @@ jobs:
 
     - name: Gerando arquivo Locust
       run: |
-        echo "from locust import HttpUser, TaskSet, task, between" > locustfile.py
+        echo "from locust import HttpUser, TaskSet, task, between" >> locustfile.py
         echo "" >> locustfile.py
         echo "class UserTasks(TaskSet):" >> locustfile.py
-        echo "    @task(1)" >> locustfile.py
-        echo "    def index(self):" >> locustfile.py
-        echo '        self.client.get("/alisson")' >> locustfile.py
+        echo "	@task(1)" >> locustfile.py
+        echo "	def index(self):" >> locustfile.py
+        echo '		self.client.get("/bruno")' >> locustfile.py
         echo "" >> locustfile.py
         echo "class WebsiteUser(HttpUser):" >> locustfile.py
-        echo "    tasks = [UserTasks]" >> locustfile.py
-        echo "    wait_time = between(1, 5)" >> locustfile.py
+        echo "	tasks = [UserTasks]" >> locustfile.py
+        echo "	wait_time = between(1, 5)" >> locustfile.py
 
     - name: Executando teste de carga
-      run: |
-        sleep 60
-        locust -f locustfile.py --headless -u 10 -r 5 --run-time 60s -H http://${{ env.alb_dns }}
-
+      run: sleep 60s ; locust -f locustfile.py --headless -u 10 -r 5 --run-time 60s -H http://${{ steps.URL.outputs.stdout }}
+      
     - name: Destroy infraestrutura
       run: terraform -chdir=teste-de-carga/env/Homolog destroy -auto-approve
