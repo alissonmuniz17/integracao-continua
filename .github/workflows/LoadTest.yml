@@ -50,7 +50,7 @@ jobs:
         echo "class UserTasks(TaskSet):" >> locustfile.py
         echo "	@task(1)" >> locustfile.py
         echo "	def index(self):" >> locustfile.py
-        echo '		self.client.get("/bruno")' >> locustfile.py
+        echo '		self.client.get("/leo")' >> locustfile.py
         echo "" >> locustfile.py
         echo "class WebsiteUser(HttpUser):" >> locustfile.py
         echo "	tasks = [UserTasks]" >> locustfile.py
