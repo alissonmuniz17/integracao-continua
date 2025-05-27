@@ -19,7 +19,7 @@ jobs:
         aws-region: us-west-2
     
     - name: Clonando repositório
-      run: git clone https://github.com/alissonmuni17/Infra_CI_Kubernetes.git
+      run: git clone https://github.com/alissonmuniz17/Infra_CI_Kubernetes.git
 
     - name: Exibindo conteúdo do EKS.tf
       run: |
