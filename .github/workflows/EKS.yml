@@ -45,6 +45,11 @@ jobs:
     - name: Apply Terraform
       run: terraform -chdir=Infra_CI_Kubernetes/env/Homolog apply -auto-approve
 
+    - name: Output Terraform
+      run: echo "$(terraform -chdir=Infra_CI_Kubernetes/env/Homolog output -raw IP_db)"
+      id: URL
+
+
     - name: Instalando o Kubectl
       uses: Azure/setup-kubectl@v4.0.0
 
@@ -56,4 +61,10 @@ jobs:
 
     - name: Testando a configuração
       run: kubectl get svc
-          
+
+    - run: kubectl create secret generic dbhost --from-literal=HOST=${{steps.URL.outuput.stdout}}
+    - run: kubectl create secret generic dbport --from-literal=DBPORT=${{secrets.DBPORT}}
+    - run: kubectl create secret generic dbuser --from-literal=USER=${{secrets.DBUSER}}
+    - run: kubectl create secret generic dbpassword --from-literal=PASSWORD=${{secrets.DBPASSWORD}}
+    - run: kubectl create secret generic dbname --from-literal=DBNAME=${{secrets.DBNAME}}
+    - run: kubectl create secret generic port --from-literal=PORT=8000
